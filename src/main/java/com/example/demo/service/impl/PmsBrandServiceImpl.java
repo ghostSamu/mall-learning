@@ -3,22 +3,28 @@ package com.example.demo.service.impl;
 
 import com.example.demo.mbg.mapper.PmsBrandMapper;
 import com.example.demo.mbg.model.PmsBrand;
-import com.example.demo.mbg.model.PmsBrandExample;
 import com.example.demo.service.PmsBrandService;
 import com.github.pagehelper.PageHelper;
+import org.mybatis.dynamic.sql.select.SelectDSLCompleter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
+
 
 @Service
 public class PmsBrandServiceImpl implements PmsBrandService {
 
     @Autowired
-    private  PmsBrandMapper brandMapper;
+    private PmsBrandMapper brandMapper;
+
+    public void create(PmsBrand entity){
+        brandMapper.insert(entity);
+    }
 
     @Override
-    public List<PmsBrand> listAllBrand(){
-        return brandMapper.selectByExample(new PmsBrandExample());
+    public List<PmsBrand> listAll(){
+        return brandMapper.select(SelectDSLCompleter.allRows());
     }
 
     @Override
@@ -38,14 +44,9 @@ public class PmsBrandServiceImpl implements PmsBrandService {
     }
 
     @Override
-    public List<PmsBrand> listBrand(int pageNum, int pageSize){
-        PageHelper.startPage(pageNum, pageSize);
-        return brandMapper.selectByExample(new PmsBrandExample());
-    }
-
-    @Override
-    public PmsBrand getBrand(Long id){
-        return brandMapper.selectByPrimaryKey(id);
+    public List<PmsBrand> listAll(int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        return brandMapper.select(SelectDSLCompleter.allRows());
     }
 
 }

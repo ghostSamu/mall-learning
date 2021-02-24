@@ -1,14 +1,13 @@
 package com.example.demo.service;
 
 
-import com.example.demo.mbg.model.PmsBrand;
-
 import java.util.List;
 
+import com.example.demo.mbg.model.PmsBrand;
 
 public  interface PmsBrandService {
 
-    List<PmsBrand> listAllBrand();
+    List<PmsBrand> listAll();
 
     int createBrand(PmsBrand brand);
 
@@ -16,7 +15,5 @@ public  interface PmsBrandService {
 
     int deleteBrand(Long id);
 
-    List<PmsBrand> listBrand(int pageNum, int pageSize);
-
-    PmsBrand getBrand(Long id);
+    List<PmsBrand> listAll(int pageNum, int pageSize);
 }

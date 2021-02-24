@@ -32,6 +32,6 @@ public class PmsBrandController {
     @ResponseBody
     public CommonResult<List<PmsBrand>> getBrandList(){
         System.out.println("接收到请求");
-        return CommonResult.success(brandService.listAllBrand());
+        return CommonResult.success(brandService.listAll());
     }
 }
