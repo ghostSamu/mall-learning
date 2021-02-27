@@ -15,16 +15,21 @@ public class CommonResult<T>{
         this.data = data;
     }
 
+    //成功获取数据
     public static <T> CommonResult<T> success(T data){
         return new CommonResult<T>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage(), data);
     }
-
+    //返回成功信息-提示信息
     public static <T>CommonResult<T> success(T data, String message){
         return new CommonResult<T>(ResultCode.SUCCESS.getCode(), message, data);
     }
-
+    //返回失败信息-错误码
     public static <T>CommonResult<T> failed(IErrorCode errorCode) {
         return new CommonResult<T>(errorCode.getCode(), errorCode.getMessage(), null);
+    }
+    //返回错误信息-提示信息
+    public static <T>CommonResult<T> failed(String message){
+        return new CommonResult<T>(ResultCode.FAILED.getCode(), message, null);
     }
 
     public long getCode() {
