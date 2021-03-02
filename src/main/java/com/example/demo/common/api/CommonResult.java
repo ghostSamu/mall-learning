@@ -31,6 +31,10 @@ public class CommonResult<T>{
     public static <T>CommonResult<T> failed(String message){
         return new CommonResult<T>(ResultCode.FAILED.getCode(), message, null);
     }
+    //参数验证失败返回结果
+    public static <T>CommonResult<T> validateFailed(String message){
+        return new CommonResult<T>(ResultCode.VALIDATE_FAILED.getCode(),message,null);
+    }
 
     public long getCode() {
         return code;
