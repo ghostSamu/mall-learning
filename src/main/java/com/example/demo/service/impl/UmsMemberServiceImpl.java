@@ -27,37 +27,11 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualToWhenPresent;
 public class UmsMemberServiceImpl implements UmsMemberService {
 
     @Autowired
-    private UmsMemberMapper memberMapper;
-    @Autowired
     private RedisService redisService;
     @Value("${redis.key.prefix.authCode}")
     private String REDIS_KYE_PREFIX_AUTH_CODE;
     @Value("${redis.key.expire.authCode}")
     private Long AUTH_CODE_EXPIRE_SECONDS;
-
-
-    @Override
-    public void register(String username, String password, String telephone, String authCode){
-        SelectStatementProvider selectStatement = SqlBuilder.select(UmsMemberMapper.selectList)
-                .from(UmsMemberDynamicSqlSupport.umsMember)
-                .where(UmsMemberDynamicSqlSupport.username, isEqualToWhenPresent(username))
-                .or(UmsMemberDynamicSqlSupport.password, isEqualToWhenPresent(telephone))
-                .build()
-                .render(RenderingStrategy.MYBATIS3);
-        List<UmsMember> umsMembers = memberMapper.selectMany(selectStatement);
-        if (!CollectionUtils.isEmpty(umsMembers)){
-            Asserts.fail("该用户已经存在");
-        }
-        //添加用户
-        UmsMember umsMember = new UmsMember();
-        umsMember.setUsername(username);
-        umsMember.setPassword(password);
-        umsMember.setPhone(telephone);
-        umsMember.setCreateTime(new Date());
-        umsMember.setStatus(1);
-        memberMapper.insert(umsMember);
-    }
-
 
     @Override
     public CommonResult getAuthCode(String telephone) {

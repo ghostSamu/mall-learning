@@ -7,9 +7,6 @@ import com.example.demo.common.api.CommonResult;
 */
 public interface UmsMemberService {
 
-    //注册
-    void register(String username, String password, String telephone, String authCode);
-
     //生成验证码
     CommonResult getAuthCode(String telephone);
 

@@ -14,22 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "UmsMemberController", description = "会员登陆注册管理")
 @RequestMapping("/sso")
 public class UmsMemberController {
-
     @Autowired
     private UmsMemberService memberService;
-
-    @ApiOperation(value = "会员注册")
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    @ResponseBody
-    public CommonResult<UmsAdmin> register(@RequestParam String name,
-                                           @RequestParam String password,
-                                           @RequestParam String telephone,
-                                           @RequestParam String authCode){
-        memberService.register(name,password,telephone,authCode);
-        return CommonResult.success(null,"注册成功");
-    }
-
-
 
     @ApiOperation("获取验证码")
     @RequestMapping(value = "/getAuthCode", method = RequestMethod.GET)
