@@ -9,11 +9,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 public class JwtTokenUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtil.class);
+    private static final String CLAIM_KEY_USERNAME = "sub";
+    private static final String CLAIM_KEY_CREATED = "create";
     @Value("${jwt.secret}")
     private String secret;
     @Value("${jwt.expiration}")
@@ -26,6 +29,13 @@ public class JwtTokenUtil {
                 .setExpiration(generateExpirationDate())
                 .signWith(SignatureAlgorithm.HS512,secret)
                 .compact();
+    }
+    //根据用户生成token
+    public String generateToken(UserDetails userDetails){
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
+        claims.put(CLAIM_KEY_CREATED, new Date());
+        return generateToken(claims);
     }
 
     //从token中获取Jwt中的负载
