@@ -1,9 +1,11 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.dao.UmsAdminRoleRelationDao;
 import com.example.demo.mbg.mapper.UmsAdminMapper;
 import com.example.demo.mbg.mapper.UmsMemberDynamicSqlSupport;
 import com.example.demo.mbg.mapper.UmsMemberMapper;
 import com.example.demo.mbg.model.UmsAdmin;
+import com.example.demo.mbg.model.UmsPermission;
 import com.example.demo.service.UmsAdminService;
 import com.example.demo.util.JwtTokenUtil;
 import org.mybatis.dynamic.sql.SqlBuilder;
@@ -21,12 +23,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import java.util.Date;
 import java.util.List;
-
 import static org.mybatis.dynamic.sql.SqlBuilder.isEqualToWhenPresent;
-import static org.mybatis.dynamic.sql.SqlBuilder.isIn;
+
 
 @Service
 public class UmsAdminServiceImpl implements UmsAdminService {
@@ -39,6 +39,8 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     private UmsAdminMapper adminMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UmsAdminRoleRelationDao umsAdminRoleRelationDao;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UmsAdminServiceImpl.class);
 
@@ -81,18 +83,22 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         }catch (Exception e){
             LOGGER.warn("登陆异常：{}",e.getMessage());
         }
-        return null;
+        return token;
     }
 
     //根据username查找用户
-    public UmsAdmin getAdminByUsername(String username, List<Integer> statusList){
-        UmsAdmin umsAdmin = new UmsAdmin();
+    @Override
+    public UmsAdmin getAdminByUsername(String username){
         List<UmsAdmin> umsAdminList = adminMapper.select(c -> c.where(UmsMemberDynamicSqlSupport.username, isEqualToWhenPresent(username))
-        .and(UmsMemberDynamicSqlSupport.status, isIn(statusList))
         .orderBy(UmsMemberDynamicSqlSupport.createTime.descending()));
-        if (!umsAdminList.isEmpty() && umsAdminList.size() > 0){
+        if (umsAdminList != null && umsAdminList.size() > 0){
             return umsAdminList.get(0);
         }
         return null;
+    }
+
+    @Override
+    public List<UmsPermission> getPermissionList(Long adminId){
+        return umsAdminRoleRelationDao.getAdminPermissionList(adminId);
     }
 }

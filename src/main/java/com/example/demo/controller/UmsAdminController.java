@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.common.api.CommonResult;
 import com.example.demo.dto.UmsAdminLoginParam;
 import com.example.demo.mbg.model.UmsAdmin;
+import com.example.demo.mbg.model.UmsPermission;
 import com.example.demo.service.UmsAdminService;
 
 import io.swagger.annotations.Api;
@@ -14,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -51,6 +53,12 @@ public class UmsAdminController {
         return CommonResult.success(tokenMap);
     }
 
-
+    @ApiOperation(value = "获得用户所有权限（包括+-权限）")
+    @RequestMapping(value = "/permission/{adminId}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<UmsPermission>> getPermissionList(@PathVariable Long adminId){
+        List<UmsPermission> umsPermissionList = umsAdminService.getPermissionList(adminId);
+        return CommonResult.success(umsPermissionList);
+    }
 
 }
