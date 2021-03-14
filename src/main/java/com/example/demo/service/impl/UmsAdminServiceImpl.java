@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dao.UmsAdminRoleRelationDao;
+import com.example.demo.mbg.mapper.UmsAdminDynamicSqlSupport;
 import com.example.demo.mbg.mapper.UmsAdminMapper;
 import com.example.demo.mbg.mapper.UmsMemberDynamicSqlSupport;
 import com.example.demo.mbg.mapper.UmsMemberMapper;
@@ -53,9 +54,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         umsAdmin.setCreateTime(new Date());
         umsAdmin.setStatus(1);
 
-        SelectStatementProvider selectStatement = SqlBuilder.select(UmsMemberMapper.selectList)
-                .from(UmsMemberDynamicSqlSupport.umsMember)
-                .where(UmsMemberDynamicSqlSupport.username, isEqualToWhenPresent(umsAdmin.getUsername()))
+        SelectStatementProvider selectStatement = SqlBuilder.select(UmsAdminMapper.selectList)
+                .from(UmsAdminDynamicSqlSupport.umsAdmin)
+                .where(UmsAdminDynamicSqlSupport.username, isEqualToWhenPresent(umsAdmin.getUsername()))
                 .build()
                 .render(RenderingStrategy.MYBATIS3);
         List<UmsAdmin> umsAdmins = adminMapper.selectMany(selectStatement);
@@ -74,7 +75,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         String token = null;
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            if (!passwordEncoder.matches(password, userDetails.getPassword())){
+            if (!passwordEncoder.matches(password, userDetails.getPassword())){  //AdminUserDetails 的 getPassword 方法设置了return null  导致一直返回null
                 throw new BadCredentialsException("密码错误");
             }
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

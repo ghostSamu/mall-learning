@@ -42,7 +42,7 @@ public class UmsAdminController {
     @ApiOperation(value = "登陆以后返回token")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult login(@RequestParam UmsAdminLoginParam umsAdminLoginParam, BindingResult result){
+    public CommonResult login(@RequestBody UmsAdminLoginParam umsAdminLoginParam, BindingResult result){    //如果不用@Requestbody 用@RquestParagram的话   网页上不能输入json格式的参数
         String token = umsAdminService.login(umsAdminLoginParam.getUsername(),umsAdminLoginParam.getPassword());
         if (token == null){
             return CommonResult.validateFailed("用户名或密码错误");
