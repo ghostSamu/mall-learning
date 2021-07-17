@@ -9,6 +9,7 @@ import com.example.demo.mbg.model.UmsAdmin;
 import com.example.demo.mbg.model.UmsPermission;
 import com.example.demo.service.UmsAdminService;
 import com.example.demo.util.JwtTokenUtil;
+import com.github.pagehelper.PageHelper;
 import org.mybatis.dynamic.sql.SqlBuilder;
 import org.mybatis.dynamic.sql.render.RenderingStrategy;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
@@ -87,7 +88,6 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         return token;
     }
 
-    //根据username查找用户
     @Override
     public UmsAdmin getAdminByUsername(String username){
         List<UmsAdmin> umsAdminList = adminMapper.select(c -> c.where(UmsMemberDynamicSqlSupport.username, isEqualToWhenPresent(username))
@@ -96,6 +96,14 @@ public class UmsAdminServiceImpl implements UmsAdminService {
             return umsAdminList.get(0);
         }
         return null;
+    }
+
+    @Override
+    public List<UmsAdmin> list(String keyword, Integer pageSize, Integer pageNum) {
+        PageHelper.startPage(pageNum,pageSize);
+        List<UmsAdmin> list = adminMapper.select(c -> c.where(UmsAdminDynamicSqlSupport.username,isEqualToWhenPresent(keyword))
+        .orderBy(UmsAdminDynamicSqlSupport.createTime.descending()));
+        return list;
     }
 
     @Override

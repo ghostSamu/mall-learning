@@ -16,4 +16,6 @@ public interface UmsAdminService {
     List<UmsPermission> getPermissionList(Long adminId);
     //根据用户名获取权限
     UmsAdmin getAdminByUsername(String username);
+    //根据用户名或昵称分页查询用户
+    List<UmsAdmin> list(String keyword, Integer pageSize, Integer pageNum);
 }

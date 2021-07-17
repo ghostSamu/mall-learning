@@ -61,4 +61,13 @@ public class UmsAdminController {
         return CommonResult.success(umsPermissionList);
     }
 
+    @ApiOperation(value = "根据角色名称分页获取角色列表")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<UmsAdmin>> list(@RequestParam String keyword,
+                                             @RequestParam Integer pageSize,
+                                             @RequestParam Integer pageNum){
+        List<UmsAdmin> umsAdminList = umsAdminService.list(keyword, pageSize, pageNum);
+        return CommonResult.success(umsAdminList);
+    }
 }
