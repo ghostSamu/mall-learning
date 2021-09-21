@@ -1,16 +1,18 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dao.UmsAdminRoleRelationDao;
-import com.example.demo.mbg.mapper.UmsAdminDynamicSqlSupport;
-import com.example.demo.mbg.mapper.UmsAdminMapper;
-import com.example.demo.mbg.mapper.UmsMemberDynamicSqlSupport;
-import com.example.demo.mbg.mapper.UmsMemberMapper;
+import com.example.demo.dao.UmsRoleDao;
+import com.example.demo.mbg.mapper.*;
 import com.example.demo.mbg.model.UmsAdmin;
+import com.example.demo.mbg.model.UmsAdminRoleRelation;
 import com.example.demo.mbg.model.UmsPermission;
+import com.example.demo.mbg.model.UmsRole;
 import com.example.demo.service.UmsAdminService;
 import com.example.demo.util.JwtTokenUtil;
 import com.github.pagehelper.PageHelper;
+import org.apache.ibatis.annotations.Select;
 import org.mybatis.dynamic.sql.SqlBuilder;
+import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.mybatis.dynamic.sql.render.RenderingStrategy;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.slf4j.Logger;
@@ -25,9 +27,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import static org.mybatis.dynamic.sql.SqlBuilder.isEqualToWhenPresent;
+
+import static org.mybatis.dynamic.sql.SqlBuilder.*;
 
 
 @Service
@@ -40,9 +45,13 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     @Autowired
     private UmsAdminMapper adminMapper;
     @Autowired
+    private UmsAdminRoleRelationMapper adminRoleRelationMapper;
+    @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private UmsAdminRoleRelationDao umsAdminRoleRelationDao;
+    @Autowired
+    private UmsRoleDao umsRoleDao;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UmsAdminServiceImpl.class);
 
@@ -79,13 +88,16 @@ public class UmsAdminServiceImpl implements UmsAdminService {
             if (!passwordEncoder.matches(password, userDetails.getPassword())){  //AdminUserDetails 的 getPassword 方法设置了return null  导致一直返回null
                 throw new BadCredentialsException("密码错误");
             }
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             token = jwtTokenUtil.generateToken(userDetails);
         }catch (Exception e){
             LOGGER.warn("登陆异常：{}",e.getMessage());
         }
         return token;
+    }
+
+    @Override
+    public String refreshToken(String oldToken) {
+        return jwtTokenUtil.refreshToken(oldToken);
     }
 
     @Override
@@ -97,6 +109,33 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         }
         return null;
     }
+    //给用户分配角色
+    @Override
+    public int updateRole(Long adminId, List<Long> roleIds) {
+        int count = roleIds == null ? 0 : roleIds.size();
+        //删除原有关系
+        adminRoleRelationMapper.deleteByPrimaryKey(adminId);
+        //建立新关系
+        if (!CollectionUtils.isEmpty(roleIds)){
+            List<UmsAdminRoleRelation> list = new ArrayList<>();
+            for (Long roleId : roleIds){
+                UmsAdminRoleRelation roleRelation = new UmsAdminRoleRelation();
+                roleRelation.setAdminId(adminId);
+                roleRelation.setRoleId(roleId);
+                list.add(roleRelation);
+            }
+            umsAdminRoleRelationDao.insertList(list);
+        }
+        return count;
+    }
+
+    //获取用户角色
+    @Override
+    public List<UmsRole> getRoleList(Long adminId) {
+        List roleList = umsAdminRoleRelationDao.getRoleList(adminId);
+        return umsAdminRoleRelationDao.getRoleList(adminId);
+    }
+
 
     @Override
     public List<UmsAdmin> list(String keyword, Integer pageSize, Integer pageNum) {
@@ -106,8 +145,10 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         return list;
     }
 
+    //获取用户权限
     @Override
     public List<UmsPermission> getPermissionList(Long adminId){
-        return umsAdminRoleRelationDao.getAdminPermissionList(adminId);
+
+        return umsAdminRoleRelationDao.getPermissionList(adminId);
     }
 }

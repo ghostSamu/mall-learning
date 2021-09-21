@@ -6,13 +6,17 @@ public class CommonResult<T>{
     private T data;
 
     protected CommonResult(){
-
     }
 
     protected CommonResult(long code, String message, T data){
         this.code = code;
         this.message = message;
         this.data = data;
+    }
+
+    //未登录返回结果
+    public static <T> CommonResult<T> unauthorized(T data){
+        return new CommonResult<T>(ResultCode.UNAUTHORIZED.getCode(), ResultCode.UNAUTHORIZED.getMessage(), data);
     }
 
     //成功获取数据
@@ -38,6 +42,10 @@ public class CommonResult<T>{
     //参数验证失败返回结果
     public static <T>CommonResult<T> validateFailed(String message){
         return new CommonResult<T>(ResultCode.VALIDATE_FAILED.getCode(),message,null);
+    }
+    //返回未授权的结果
+    public static <T>CommonResult<T> forbidden(T data){
+        return new CommonResult<T>(ResultCode.FORBIDDEN.getCode(),ResultCode.FORBIDDEN.getMessage(), data);
     }
 
     public long getCode() {

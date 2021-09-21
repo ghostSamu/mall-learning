@@ -3,10 +3,12 @@ package com.example.demo.dto;
 import com.example.demo.mbg.model.UmsAdmin;
 import com.example.demo.mbg.model.UmsPermission;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AdminUserDetails implements UserDetails {
 
@@ -21,7 +23,9 @@ public class AdminUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return umsPermissionList.stream().filter(umsPermission -> umsPermission.getValue()!=null)
+                .map(umsPermission -> new SimpleGrantedAuthority(umsPermission.getValue()))
+                .collect(Collectors.toList());
     }
 
     @Override

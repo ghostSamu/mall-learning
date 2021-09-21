@@ -1,28 +1,20 @@
 package com.example.demo.dao;
-
+import com.example.demo.mbg.model.UmsAdminRoleRelation;
 import com.example.demo.mbg.model.UmsPermission;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.springframework.stereotype.Component;
+import com.example.demo.mbg.model.UmsRole;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 @Repository
 public interface UmsAdminRoleRelationDao {
 
+    //批量插入用户角色关系
+    int insertList(@Param("list")List<UmsAdminRoleRelation> umsAdminRoleRelationList);
+
+    //获取角色
+    List<UmsRole> getRoleList(@Param("adminId") Long adminId);
+
     //获取用户权限（包括+—权限）
-    @SelectProvider(type = UmsAdminRoleRelationSelectProvider.class, method = "getAdminPermissionList")  //注意method名誉 下面class中的名字保持一致，不然会报错
-    List<UmsPermission> getAdminPermissionList(@Param("adminId") Long adminId);
-
-
-     class UmsAdminRoleRelationSelectProvider {
-
-        public String getAdminPermissionList(Long adminId){
-
-            String inStr = "select * from ums_permission where id = " + adminId;
-            return inStr;
-        }
-    }
+    List<UmsPermission> getPermissionList(@Param("adminId") Long adminId);
 }

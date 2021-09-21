@@ -8,9 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +19,20 @@ public class UmsRoleController {
 
     @Autowired
     private UmsRoleService umsRoleService;
+
+    @ApiOperation("添加角色")
+    @RequestMapping(value = "/create",method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult create(@RequestBody UmsRole role){
+        int count = umsRoleService.create(role);
+        if (count > 0){
+            CommonResult.success(count);
+        }
+        return CommonResult.failed();
+    }
+
+
+
 
     @ApiOperation("获取所有角色")
     @RequestMapping(value = "/listAll", method = RequestMethod.GET)

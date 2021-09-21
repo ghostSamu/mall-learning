@@ -1,9 +1,11 @@
 package com.example.demo.config;
 
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -12,11 +14,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import springfox.documentation.spi.service.contexts.SecurityContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @EnableSwagger2
@@ -37,7 +42,9 @@ public class Swagger2Config implements WebMvcConfigurer {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.example.demo.controller"))
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .securitySchemes(securitySchemes())
+                .securityContexts(securityContexts());
     }
 
     private ApiInfo apiInfo(){
@@ -47,6 +54,36 @@ public class Swagger2Config implements WebMvcConfigurer {
                 .contact(new Contact("FireAndLemon","",""))
                 .version("1.0")
                 .build();
+    }
+
+    private List<SecurityScheme> securitySchemes() {
+        List<SecurityScheme> result = new ArrayList<>();
+        //设置请求头信息
+        ApiKey apiKey = new ApiKey("Authorization","Authorization","header");
+        result.add(apiKey);
+        return result;
+    }
+
+    private List<SecurityContext> securityContexts() {
+        //设置需要登录认证（jwt）的路径
+        List<SecurityContext> result = new ArrayList<>();
+        result.add(getContextByPath("/permission/.*"));
+        result.add(getContextByPath("/admin/.*"));
+        result.add(getContextByPath("/role/.*"));
+        return result;
+    }
+
+    private SecurityContext getContextByPath(String pathRegex){
+        return SecurityContext.builder().securityReferences(defaultAuth()).forPaths(PathSelectors.regex(pathRegex)).build();
+    }
+
+    private List<SecurityReference> defaultAuth() {
+        List<SecurityReference> result = new ArrayList<>();
+        AuthorizationScope authorizationScope = new AuthorizationScope("global","accessEverything");
+        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+        authorizationScopes[0] = authorizationScope;
+        result.add(new SecurityReference("Authorization", authorizationScopes));
+        return result;
     }
 
     /**
