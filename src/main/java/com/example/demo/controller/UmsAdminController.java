@@ -42,7 +42,7 @@ public class UmsAdminController {
     @ApiOperation(value = "用户注册")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult<UmsAdmin> register(@RequestBody UmsAdmin umsAdminParam, BindingResult result){
+    public CommonResult<UmsAdmin> register(@RequestBody UmsAdmin umsAdminParam){
         UmsAdmin umsAdmin = umsAdminService.register(umsAdminParam);
         if (umsAdmin == null){
             CommonResult.failed();
@@ -50,6 +50,27 @@ public class UmsAdminController {
         return CommonResult.success(umsAdmin);
     }
 
+    @ApiOperation(value = "添加用户")
+    @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult registerAdmin(@PathVariable Long id, @RequestBody UmsAdmin umsAdminParam){
+        int count = umsAdminService.updateAdmin(id, umsAdminParam);
+        if (count > 0){
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed();
+    }
+
+    @ApiOperation(value = "删除用户")
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult delete(@PathVariable Long id){
+        int count = umsAdminService.deleteAdmin(id);
+        if (count > 0){
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed();
+    }
 
     @ApiOperation(value = "登陆以后返回token")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -130,6 +151,19 @@ public class UmsAdminController {
         return CommonResult.success(roleList);
     }
 
+    @ApiOperation(value = "修改用户状态")
+    @RequestMapping(value = "/updateStatus/{adminId}",method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateStatus(@PathVariable Long Id,@RequestParam(value = "status") Integer status){
+        UmsAdmin umsAdmin = new UmsAdmin();
+        umsAdmin.setStatus(status);
+        int count = umsAdminService.updateAdmin(Id,umsAdmin);
+        if (count > 0){
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed();
+    }
+
     @ApiOperation(value = "根据角色名称分页获取角色列表")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
@@ -139,6 +173,4 @@ public class UmsAdminController {
         List<UmsAdmin> umsAdminList = umsAdminService.list(keyword, pageSize, pageNum);
         return CommonResult.success(CommonPage.restPage(umsAdminList));   //关于范型，注意返回值 与 方法定义的返回对象 类型保持一致
     }
-
-
 }

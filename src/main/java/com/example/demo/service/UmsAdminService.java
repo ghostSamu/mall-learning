@@ -27,4 +27,10 @@ public interface UmsAdminService {
     List<UmsRole> getRoleList(Long adminId);
     //根据用户名或昵称分页查询用户
     List<UmsAdmin> list(String keyword, Integer pageSize, Integer pageNum);
+    //修改用户信息
+    int updateAdmin(Long id, UmsAdmin admin);
+    //删除用户
+    int deleteAdmin(Long id);
+    //获取用户
+    UmsAdmin getItem(Long id);
 }
