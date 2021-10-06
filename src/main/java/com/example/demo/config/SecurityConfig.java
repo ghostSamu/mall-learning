@@ -44,34 +44,35 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception{
-        httpSecurity.csrf().disable()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET, // 允许对于网站静态资源的无授权访问
-                        "/",
-                        "/*.html",
-                        "/favicon.ico",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js",
-                        "/swagger-resources/**",
-                        "/v2/api-docs/**",
-                        "/swagger-ui/*")
-                .permitAll()
-                .antMatchers("/admin/login", "/admin/register")
-                .permitAll()
+        httpSecurity.cors().and().csrf().disable(); //CSRF跨站防护,不开启的话，post请求会被拦截，返回403
+//        httpSecurity.csrf().disable()
+//                .sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
+//                .authorizeRequests()
+//                .antMatchers(HttpMethod.GET, // 允许对于网站静态资源的无授权访问
+//                        "/",
+//                        "/*.html",
+//                        "/favicon.ico",
+//                        "/**/*.html",
+//                        "/**/*.css",
+//                        "/**/*.js",
+//                        "/swagger-resources/**",
+//                        "/v2/api-docs/**",
+//                        "/swagger-ui/*")
+//                .permitAll()
+//                .antMatchers("/admin/login", "/admin/register")
+//                .permitAll()
 //                .antMatchers(HttpMethod.OPTIONS)//跨域请求会先进行一次options请求
 //                .permitAll()
-                .anyRequest()
-                .authenticated();
+//                .anyRequest()
+//                .authenticated();
         //禁用缓存
         httpSecurity.headers().cacheControl();
         //添加jwt的filter
-        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         //添加自定义未授权和未登录结果返回
-        httpSecurity.exceptionHandling().accessDeniedHandler(restfulAccessDeniedHandler).authenticationEntryPoint(restAuthenticationEntryPoint);
+//        httpSecurity.exceptionHandling().accessDeniedHandler(restfulAccessDeniedHandler).authenticationEntryPoint(restAuthenticationEntryPoint);
     }
 
     @Override

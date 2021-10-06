@@ -1,6 +1,7 @@
 package com.example.demo.dao;
 
 import com.example.demo.mbg.model.UmsMenu;
+import com.example.demo.mbg.model.UmsResource;
 import com.example.demo.mbg.model.UmsRole;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
@@ -19,5 +20,8 @@ public interface UmsRoleDao {
     List<UmsMenu> getMenuList(@Param("adminId") Long adminId);
 
     //根据角色ID获取菜单
-//    List<UmsMenu> getMenuListByRoleId(@Param("roleId") Long roleId);
+    List<UmsMenu> getMenuListByRoleId(@Param("roleId") Long roleId);
+
+    //根据角色ID获取资源
+    List<UmsResource> getResourceListByRoleId(@Param("roleId") Long roleId);
 }

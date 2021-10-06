@@ -24,4 +24,41 @@
         group by
             m.id
     </select>
+    <select id="getMenuListByRoleId" resultType="com.example.demo.mbg.model.UmsMenu">
+        select
+            m.id id,
+            m.parent_id parentId,
+            m.create_time createTime,
+            m.title title,
+            m.level level,
+            m.sort sort,
+            m.name name,
+            m.icon icon,
+            m.hidden hidden
+        from
+            ums_role_menu_relation rmr
+                left join ums_menu m on rmr.menu_id = m.id
+        where
+            rmr.role_id = #{roleId}
+            and m.id is not null
+            group by
+                m.id
+    </select>
+    <select id="getResourceListByRoleId" resultType="com.example.demo.mbg.model.UmsResource">
+        select
+            r.id id,
+            r.create_time createTime,
+            r.`name` `name`,
+            r.url url,
+            r.description description,
+            r.category_id categoryId
+        from
+            ums_role_resource_relation rrr
+                left join ums_resource r on rrr.resource_id = r.id
+        where
+            rrr.role_id = #{roleId}
+            and r.id is not null
+            group by
+                r.id
+    </select>
 </mapper>

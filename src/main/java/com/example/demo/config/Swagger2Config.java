@@ -70,6 +70,7 @@ public class Swagger2Config implements WebMvcConfigurer {
         result.add(getContextByPath("/permission/.*"));
         result.add(getContextByPath("/admin/.*"));
         result.add(getContextByPath("/role/.*"));
+        result.add(getContextByPath("/menu/.*"));
         return result;
     }
 

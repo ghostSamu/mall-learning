@@ -137,7 +137,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
                 UmsAdminRoleRelation roleRelation = new UmsAdminRoleRelation();
                 roleRelation.setAdminId(adminId);
                 roleRelation.setRoleId(roleId);
-                list.add(roleRelation);
+    list.add(roleRelation);
             }
             umsAdminRoleRelationDao.insertList(list);
         }
@@ -150,7 +150,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     public List<UmsRole> getRoleList(Long adminId) {
         List roleList = umsAdminRoleRelationDao.getRoleList(adminId);
         return umsAdminRoleRelationDao.getRoleList(adminId);
-    }
+}
 
 
     @Override

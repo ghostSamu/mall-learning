@@ -68,7 +68,7 @@ public class JwtTokenUtil {
 
     //生成Token的有效时间
     private Date generateExpirationDate(){
-        return new Date(System.currentTimeMillis() + expiration * 10000);
+        return new Date(System.currentTimeMillis() + expiration * 100000);
     }
     //从token中获取有效时间
     private Date getExpiredDateFromToken(String token){
